@@ -1,0 +1,20 @@
+# Code to create schema for placement table in MySQL.
+# Note that i deleted the serial number column in raw data from kaggle in excel itself. But if you want to keep it then i have commented the line for creating serial no column in table. You can just uncomment it.
+
+CREATE TABLE `plcmnt_stats` (
+# `serial_no` int DEFAULT NULL,
+  `sex` varchar(10) DEFAULT NULL,
+  `ssc_p` float DEFAULT NULL,
+  `ssc_b` varchar(50) DEFAULT NULL,
+  `hsc_p` float DEFAULT NULL,
+  `hsc_b` varchar(50) DEFAULT NULL,
+  `hsc_s` varchar(50) DEFAULT NULL,
+  `degree_p` float DEFAULT NULL,
+  `degree_t` varchar(50) DEFAULT NULL,
+  `workex` varchar(50) DEFAULT NULL,
+  `etest_p` float DEFAULT NULL,
+  `specialisation` varchar(50) DEFAULT NULL,
+  `mba_p` float DEFAULT NULL,
+  `status` varchar(50) DEFAULT NULL,
+  `salary` float DEFAULT NULL
+)
