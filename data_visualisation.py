@@ -1,6 +1,7 @@
 import mysql.connector as sqlcon  # Calling required libraries and functions
 import pandas as pd
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 # Establishing Connection and calling data from MySQL database
 conn = sqlcon.connect(user = 'root', password = 'aybs1196', host = '127.0.0.1', database = 'py_vis')
@@ -45,7 +46,7 @@ description = pd.Series(['gender of candidate', 'marks(in%) in 10th std', '10th 
 data_summ = pd.concat([colnames, coltype, miss_rows, description], axis = 1)
 data_summ.columns = ['name', 'type', 'perc_of_NAs', 'description']
 
-fig = go.Figure(data = [go.Table(				#Step2: Create stylized table with plotly
+fig1 = go.Figure(data = [go.Table(				#Step2: Create stylized table with plotly
 							columnorder = [1,3,2,4],			# Change order of columns in plot
 							columnwidth = [800, 800, 400, 800], # Note the column width is mapped to column given in cell values in same order
 							header = dict(values = list(data_summ.columns),
@@ -63,8 +64,62 @@ fig = go.Figure(data = [go.Table(				#Step2: Create stylized table with plotly
 											height = 25)
 								)
 						])
-fig.update_layout(width = 1000, height = 1500) # changes web page dimension
-fig.show()
+fig1.update_layout(width = 1000, height = 1500) # changes web page dimension
+# fig1.show()
+
+
+#Fig 2: Stacked Bar chart showing missing data information and column type with hover text
+fig2 = go.Figure(data = [
+			go.Bar(name = 'Available ', x = data_summ.name, y = 100 - data_summ.perc_of_NAs, hovertext = data_summ.type, marker_color = 'orange'),
+			go.Bar(name = 'Missing ', x = data_summ.name, y = data_summ.perc_of_NAs, hovertext = data_summ.type, marker_color = 'blue')
+		])
+fig2.update_traces(marker_line_color = 'black', marker_line_width = 2, opacity = 0.6)
+fig2.update_layout(title = 'Missing Data Information',xaxis_title = 'column', barmode = 'stack',
+				   yaxis_title = 'Missing Data Information', font = dict(size = 18))
+# fig2.show()
+
+
+# Fig3: Pie chart showing how many columns are categorical and how many are numeric
+fig3 = go.Figure(data = [
+			go.Pie(labels = data_summ.iloc[0:-2,:].type.unique(),
+					 values = data_summ.iloc[0:-2,:].type.value_counts(), hole = 0.4)
+	])
+fig3.update_traces(hoverinfo = 'label+percent', textinfo = 'value', textfont_size = 30,
+				   marker_line_color = 'black', marker_line_width = 2, opacity = 0.6,
+				   marker = dict(colors = ['orange', 'blue']))
+fig3.update_layout()
+# fig3.show()
+
+#Fig4: Creating bar charts to show information about unique values
+
+fig4 = make_subplots(rows = 2, cols = 4, subplot_titles = list(data_summ[data_summ.type == 'categorical'].name))
+fig4.add_trace(go.Bar(name = 'sex', x = data.sex.unique(), y = data.sex.value_counts(),
+						text = plcmnt_records.sex.unique(), marker_color = 'blue'),
+					   row = 1, col = 1)
+fig4.add_trace(go.Bar(name = 'ssc_b', x = data.ssc_b.unique(), y = data.ssc_b.value_counts(),
+						text = plcmnt_records.ssc_b.unique(), marker_color = 'blue'),
+					   row = 1, col = 2)
+fig4.add_trace(go.Bar(name = 'hsc_b', x = data.hsc_b.unique(), y = data.hsc_b.value_counts(),
+						text = plcmnt_records.hsc_b.unique(), marker_color = 'blue'),
+						row = 1, col = 3)
+fig4.add_trace(go.Bar(name = 'hsc_s', x = data.hsc_s.unique(), y = data.hsc_s.value_counts(),
+						text = plcmnt_records.hsc_s.unique(), marker_color = 'blue'),
+						row = 1, col = 4)
+fig4.add_trace(go.Bar(name = 'degree_t', x = data.degree_t.unique(), y = data.degree_t.value_counts(),
+						text = plcmnt_records.degree_t.unique(), marker_color = 'blue'),
+						row = 2, col = 1)
+fig4.add_trace(go.Bar(name = 'workex', x = data.workex.unique(), y = data.workex.value_counts(),
+						text = plcmnt_records.workex.unique(), marker_color = 'blue'),
+						row = 2, col = 2)
+fig4.add_trace(go.Bar(name = 'specialisation', x = data.specialisation.unique(), y = data.specialisation.value_counts(),
+						text = plcmnt_records.specialisation.unique(), marker_color = 'blue'),
+						row = 2, col = 3)
+fig4.add_trace(go.Bar(name = 'status', x = data.status.unique(), y = data.status.value_counts(),
+						text = plcmnt_records.status.unique(), marker_color = 'blue'),
+						row = 2, col = 4)
+
+fig4.update_layout(showlegend = False)
+fig4.show()
 
 
 
