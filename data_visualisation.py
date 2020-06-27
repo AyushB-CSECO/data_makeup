@@ -1,8 +1,10 @@
 import mysql.connector as sqlcon  # Calling required libraries and functions
 import pandas as pd
+import numpy as np
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import statistics as stats
+
 
 # Establishing Connection and calling data from MySQL database
 conn = sqlcon.connect(user = 'root', password = 'aybs1196', host = '127.0.0.1', database = 'py_vis')
@@ -52,7 +54,7 @@ fig1 = go.Figure(data = [go.Table(				#Step2: Create stylized table with plotly
 							columnwidth = [800, 800, 400, 800], # Note the column width is mapped to column given in cell values in same order
 							header = dict(values = list(data_summ.columns),
 											line_color = 'black',
-											fill_color = 'grey', # Note for every column a diff color can be given by passing an array of colurs[c1,...,cN]
+											fill_color = 'limegreen', # Note for every column a diff color can be given by passing an array of colurs[c1,...,cN]
 											font = dict(color = 'white', size = 18), # Note like fill_color diff values for all columns can be given for
 											align = 'center', # font arguements and align by passing an array [arg1,...argN]
 											height = 30),
@@ -65,18 +67,19 @@ fig1 = go.Figure(data = [go.Table(				#Step2: Create stylized table with plotly
 											height = 25)
 								)
 						])
-fig1.update_layout(width = 1000, height = 1500, title = {'text':'Summary Table', 'x': 0.08, 'y': 0.95}, font = dict(size = 18)) # changes web page dimension
+fig1.update_layout(width = 1000, height = 1500, title = {'text':'Summary Table', 'x': 0.08, 'y': 0.95},
+				   font = dict(size = 18), template = 'presentation') # changes web page dimension
 fig1.show()
 
 
 #Fig 2: Stacked Bar chart showing missing data information and column type with hover text
 fig2 = go.Figure(data = [
-			go.Bar(name = 'Available ', x = data_summ.name, y = 100 - data_summ.perc_of_NAs, hovertext = data_summ.type, marker_color = 'orange'),
-			go.Bar(name = 'Missing ', x = data_summ.name, y = data_summ.perc_of_NAs, hovertext = data_summ.type, marker_color = 'blue')
+			go.Bar(name = 'Available ', x = data_summ.name, y = 100 - data_summ.perc_of_NAs, hovertext = data_summ.type, marker_color = 'blue'),
+			go.Bar(name = 'Missing ', x = data_summ.name, y = data_summ.perc_of_NAs, hovertext = data_summ.type, marker_color = 'limegreen')
 		])
 fig2.update_traces(marker_line_color = 'black', marker_line_width = 2, opacity = 0.6)
 fig2.update_layout(title = {'text':'Missing Data Information', 'y': 0.92},xaxis_title = 'column', barmode = 'stack',
-				   yaxis_title = 'Missing Data Information', font = dict(size = 18))
+				   yaxis_title = 'Missing Data Information', font = dict(size = 18), template = 'presentation')
 fig2.show()
 
 
@@ -87,8 +90,9 @@ fig3 = go.Figure(data = [
 	])
 fig3.update_traces(hoverinfo = 'label+percent', textinfo = 'value', textfont_size = 30,
 				   marker_line_color = 'black', marker_line_width = 2, opacity = 0.6,
-				   marker = dict(colors = ['orange', 'blue']))
-fig3.update_layout(title = {'text': 'Categorical vs Numeric Variables Share', 'y':0.92}, font = dict(size = 18))
+				   marker = dict(colors = ['limegreen', 'blue']))
+fig3.update_layout(title = {'text': 'Categorical vs Numeric Variables Share', 'y':0.92},
+				   font = dict(size = 18), template = 'presentation')
 fig3.show()
 
 # Fig4: Creating Boxplot to show features of numerical variables in data
@@ -111,42 +115,89 @@ fig4.add_trace(go.Scatter(x = ['ssc_p', 'hsc_p', 'degree_p', 'mba_p', 'etest_p']
 						  	   line = dict(color = 'black', width = 2, dash = 'dash')))
 fig4.update_traces(opacity = 0.7)
 fig4.update_layout(title = {'text':'Summary Statistics of Numerical Variables', 'y':0.91}, xaxis_title = 'Variable',
-				   yaxis_title = 'Marks(in %)', font = dict(size = 18))
+				   yaxis_title = 'Marks(in %)', font = dict(size = 18), template = 'presentation')
 fig4.show()
 
 #Fig5: Creating bar charts to show information about unique values
 
 fig5 = go.Figure(data = [
 			go.Bar(name = 'Female', x = ['sex'], y = [round(sum(data.sex == 0)*factor,2)], marker_color = 'blue', text = 'Female', textposition = 'auto'),
-			go.Bar(name = 'Male', x = ['sex'], y = [round(sum(data.sex == 1)*factor,2)], marker_color = 'orange', text = 'Male', textposition = 'auto')		
+			go.Bar(name = 'Male', x = ['sex'], y = [round(sum(data.sex == 1)*factor,2)], marker_color = 'limegreen', text = 'Male', textposition = 'auto')		
 		])
 
 fig5.add_trace(go.Bar(name = 'Others', x = ['ssc_b'], y = [round(sum(data.ssc_b == 0)*factor,2)], marker_color = 'blue', text = 'Others', textposition = 'auto'))
-fig5.add_trace(go.Bar(name = 'Central', x = ['ssc_b'], y = [round(sum(data.ssc_b == 1)*factor,2)], marker_color = 'orange', text = 'Central', textposition = 'auto'))
+fig5.add_trace(go.Bar(name = 'Central', x = ['ssc_b'], y = [round(sum(data.ssc_b == 1)*factor,2)], marker_color = 'limegreen', text = 'Central', textposition = 'auto'))
 
 fig5.add_trace(go.Bar(name = 'Others', x = ['hsc_b'], y = [round(sum(data.hsc_b == 0)*factor,2)], marker_color = 'blue', text = 'Others', textposition = 'auto'))
-fig5.add_trace(go.Bar(name = 'Central', x = ['hsc_b'], y = [round(sum(data.hsc_b == 1)*factor,2)], marker_color = 'orange', text = 'Central', textposition = 'auto'))
+fig5.add_trace(go.Bar(name = 'Central', x = ['hsc_b'], y = [round(sum(data.hsc_b == 1)*factor,2)], marker_color = 'limegreen', text = 'Central', textposition = 'auto'))
 
 fig5.add_trace(go.Bar(name = 'Commerce', x = ['hsc_s'], y = [round(sum(data.hsc_s == 0)*factor,2)], marker_color = 'blue', text = 'Commerce', textposition = 'auto'))
-fig5.add_trace(go.Bar(name = 'Science', x = ['hsc_s'], y = [round(sum(data.hsc_s == 1)*factor,2)], marker_color = 'orange', text = 'Science', textposition = 'auto'))
-fig5.add_trace(go.Bar(name = 'Arts', x = ['hsc_s'], y = [round(sum(data.hsc_s == 2)*factor,2)], marker_color = 'green', text = 'Arts', textposition = 'auto'))
+fig5.add_trace(go.Bar(name = 'Science', x = ['hsc_s'], y = [round(sum(data.hsc_s == 1)*factor,2)], marker_color = 'limegreen', text = 'Science', textposition = 'auto'))
+fig5.add_trace(go.Bar(name = 'Arts', x = ['hsc_s'], y = [round(sum(data.hsc_s == 2)*factor,2)], marker_color = 'lightskyblue', text = 'Arts', textposition = 'auto'))
 
 fig5.add_trace(go.Bar(name = 'Sci&Tech', x = ['degree_t'], y = [round(sum(data.degree_t == 0)*factor,2)], marker_color = 'blue', text = 'Sci&Tech', textposition = 'auto'))
-fig5.add_trace(go.Bar(name = 'Comm&Mgmt', x = ['degree_t'], y = [round(sum(data.degree_t == 1)*factor,2)], marker_color = 'orange', text = 'Comm&Mgmt', textposition = 'auto'))
-fig5.add_trace(go.Bar(name = 'Others', x = ['degree_t'], y = [round(sum(data.degree_t == 2)*factor,2)], marker_color = 'green', text = 'Others', textposition = 'auto'))
+fig5.add_trace(go.Bar(name = 'Comm&Mgmt', x = ['degree_t'], y = [round(sum(data.degree_t == 1)*factor,2)], marker_color = 'limegreen', text = 'Comm&Mgmt', textposition = 'auto'))
+fig5.add_trace(go.Bar(name = 'Others', x = ['degree_t'], y = [round(sum(data.degree_t == 2)*factor,2)], marker_color = 'lightskyblue', text = 'Others', textposition = 'auto'))
 
 fig5.add_trace(go.Bar(name = 'No', x = ['workex'], y = [round(sum(data.workex == 0)*factor,2)], marker_color = 'blue', text = 'No', textposition = 'auto'))
-fig5.add_trace(go.Bar(name = 'Yes', x = ['workex'], y = [round(sum(data.workex == 1)*factor,2)], marker_color = 'orange', text = 'Yes', textposition = 'auto'))
+fig5.add_trace(go.Bar(name = 'Yes', x = ['workex'], y = [round(sum(data.workex == 1)*factor,2)], marker_color = 'limegreen', text = 'Yes', textposition = 'auto'))
 
 fig5.add_trace(go.Bar(name = 'Mkt&HR', x = ['specialisation'], y = [round(sum(data.specialisation == 0)*factor,2)],
 				marker_color = 'blue', text = 'Mkt&HR', textposition = 'auto'))
 fig5.add_trace(go.Bar(name = 'Mkt&Fin', x = ['specialisation'], y = [round(sum(data.specialisation == 1)*factor,2)],
-				marker_color = 'orange', text = 'Mkt&Fin', textposition = 'auto'))
+				marker_color = 'limegreen', text = 'Mkt&Fin', textposition = 'auto'))
 
 fig5.add_trace(go.Bar(name = 'Not Placed', x = ['status'], y = [round(sum(data.status == 0)*factor,2)], marker_color = 'blue', text = 'Not Placed', textposition = 'auto'))
-fig5.add_trace(go.Bar(name = 'Placed', x = ['status'], y = [round(sum(data.status == 1)*factor,2)], marker_color = 'orange', text = 'Placed', textposition = 'auto'))
+fig5.add_trace(go.Bar(name = 'Placed', x = ['status'], y = [round(sum(data.status == 1)*factor,2)], marker_color = 'limegreen', text = 'Placed', textposition = 'auto'))
 
+fig5.update_traces(marker_line_color = 'black',marker_line_width = 1, opacity = 0.8)
 fig5.update_layout(barmode = 'stack', showlegend = False, 
 					title = {'text':'Composition of Factors in a Categorical Variable', 'y': 0.92},
-					xaxis_title = 'Variable', yaxis_title = 'factors(perc of rows)', font = dict(size = 20))
+					xaxis_title = 'Variable', yaxis_title = 'factors(perc of rows)',
+					font = dict(size = 20), template = 'presentation')
 fig5.show()
+
+
+#Fig6: A plot containing two subplots showcasing the statistical properties of th dependent variable ie salary
+data_placed = data[data.status == 1]
+salary = data_placed.salary.sort_values()
+nbins = 10
+temp_index = [int(len(salary)/nbins*i) for i in range(0,nbins+1,1)]
+bins_avg = list([0])
+i = 0
+while i+1 < len(temp_index):
+	x_mean = round(sum(salary.iloc[temp_index[i]:temp_index[i+1]])/sum(salary)*100,2)
+	bins_avg.append(x_mean)
+	i = i+1
+
+cum_share = [sum(bins_avg[0:i]) for i in range(1,nbins+2)]
+perc_index = [100/nbins*i for i in range(nbins+1)]
+
+pkg_dist_table = pd.DataFrame([perc_index, bins_avg, cum_share]).T
+pkg_dist_table.columns = ['popn_perc', 'salary_share', 'cum_share']
+
+fig6A = go.Figure(data = [
+			go.Scatter(name = 'salary_distribution', x = pkg_dist_table.popn_perc, y = pkg_dist_table.cum_share,
+					   line = dict(color = 'blue', width = 3))
+	])
+fig6A.add_trace(go.Scatter(name = 'line of perfect equality', x = pkg_dist_table.popn_perc, y = pkg_dist_table.popn_perc,
+						   line = dict(color = 'limegreen', width = 3)))
+fig6A.update_layout(title = {'text': 'Package\'s Inequality', 'y':0.91}, font = dict(size = 18),
+				    xaxis_title = 'Population Percentile(Placed)', yaxis_title = 'Salary Percentile',
+				    template = 'presentation')
+fig6A.show()
+
+fig6B = make_subplots(rows = 2, cols = 1, subplot_titles = (' ', ' '),
+					  shared_xaxes = True, vertical_spacing = 0.1, row_heights = [0.4, 0.7])
+fig6B.add_trace(go.Box(name = ' ', x = salary, boxpoints = 'all', boxmean = True, marker_color = 'blue'), row = 1, col = 1)
+fig6B.add_trace(go.Histogram(name = 'salary', x = salary, nbinsx = nbins*2, marker_color = 'limegreen', marker_line_color = 'black',
+							 marker_line_width = 2), row = 2, col = 1)
+fig6B.update_xaxes(title_text = 'Salary (in Rs)', row = 2, col = 1)
+fig6B.update_yaxes(title_text = 'Number of Offers', row = 2, col =1)
+fig6B.update_yaxes(title_text = ' ', row = 1, col = 1)
+fig6B.update_xaxes(showgrid = False, row = 1, col = 1)
+fig6B.update_traces(opacity = 0.8, showlegend = False)
+fig6B.update_layout(template = 'presentation', title = {'text':'Statistical Summaries of Salary Package'}, font = dict(size = 18))
+
+fig6B.show()
+
