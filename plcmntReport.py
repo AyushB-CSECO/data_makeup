@@ -13,7 +13,7 @@ import scipy.stats
 
 
 # Establishing Connection and calling data from MySQL database
-conn = sqlcon.connect(user = 'root', password = 'aybs1196', host = '127.0.0.1', database = 'py_vis')
+conn = sqlcon.connect(user = 'ayush', password = 'aybs1196', host = '127.0.0.1', database = 'py_vis')
 query = 'SELECT * FROM plcmnt_stats'
 cursor = conn.cursor()
 cursor.execute(query)
