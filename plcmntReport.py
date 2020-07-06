@@ -115,7 +115,7 @@ fig4 = go.Figure(data = [
 			])
 fig4.add_trace(go.Box(name = 'hsc_p', y = data.hsc_p, boxmean = True, boxpoints = 'all', marker_color = 'blue'))
 fig4.add_trace(go.Box(name = 'degree_p', y = data.degree_p, boxmean = True, boxpoints = 'all', marker_color = 'blue'))
-fig4.add_trace(go.Box(name = 'mba_p# Step1: Create pandas dataframe for summary', y = data.mba_p, boxmean = True, boxpoints = 'all', marker_color = 'blue'))
+fig4.add_trace(go.Box(name = 'mba_p', y = data.mba_p, boxmean = True, boxpoints = 'all', marker_color = 'blue'))
 fig4.add_trace(go.Box(name = 'etest_p', y = data.etest_p, boxmean = True, boxpoints = 'all', marker_color = 'blue'))
 fig4.add_trace(go.Scatter(x = ['ssc_p', 'hsc_p', 'degree_p', 'mba_p', 'etest_p'],
 						  y = [stats.median(data.ssc_p), stats.median(data.hsc_p), stats.median(data.degree_p),
@@ -220,7 +220,7 @@ fig6B.update_layout(template = 'presentation', title = {'text':'Fig6 - Statistic
 # Fig7: Show a heatmap of correlation between different numeric variables along with dependent variables
 data_corr = data.corr()
 data_corr = data_corr.apply(lambda x: round(x,2))
-data.salary[data.salary.isna()] = 0
+data.loc[data.salary.isna(), 'salary'] = 0
 for i in data.columns:
 	for j in data.columns: 					# Making all insignificant correlations based on p-value 0 
 		x_tuple = scipy.stats.pearsonr(data.loc[:,i], data.loc[:,j])	# so as to focus on significant
@@ -230,7 +230,7 @@ fig7 = go.Figure(data = [
 			go.Heatmap(z = np.array(data_corr), x = data.columns, y = data.columns, colorscale = 'GnBu'
 				, connectgaps = False, opacity = 1, xgap = 1, ygap = 1)
 	])
-fig7.update_layout(title = {'text':'Fig7 - Correlation Heatmap', 'y':0.91, 'x':0.48}, font = dict(size = 18),
+fig7.update_layout(title = {'text':'Fig8 - Correlation Heatmap', 'y':0.91, 'x':0.48}, font = dict(size = 18),
 					height = 700, width = 1400)
 # fig7.show()
 
